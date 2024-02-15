@@ -1,16 +1,18 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
-class Produto {
+class  Produto {
     String nome;
     double precoproduto;
     int quantidade;
     double precoOriginal;
     double desconto;
 
-    public Produto(String nome, double precoproduto, int quantidade, double precoOriginal, double desconto) {
+    double lucroFinal;
+
+
+     Produto(String nome, double precoproduto, int quantidade, double precoOriginal, double desconto) {
         this.nome = nome;
         this.precoproduto = precoproduto;
         this.quantidade = quantidade;
@@ -84,18 +86,32 @@ public class Main {
     }
 
     public static void verProdutos(List<Produto> listaProdutos) {
+
         if (listaProdutos.isEmpty()) {
             System.out.println("Não há produtos cadastrados.");
         } else {
             System.out.println("Produtos cadastrados:");
             for (Produto produto : listaProdutos) {
+
+                double valorDesconto = produto.precoproduto * (produto.desconto / 100);
+
+                double valorFinal = produto.precoproduto - valorDesconto;
+
+                double calcularLucro = valorFinal - produto.precoOriginal;
+
+                produto.lucroFinal = calcularLucro * produto.quantidade;
+
                 System.out.println();
                 System.out.println("*******************************************");
+                System.out.println();
                 System.out.println("Nome do produto: " + produto.nome);
-                System.out.println("Preço do produto: " + produto.precoproduto);
+                System.out.println("Preço do produto: $" + produto.precoproduto);
                 System.out.println("Quantidade: " + produto.quantidade);
-                System.out.println("Preço original: " + produto.precoOriginal);
+                System.out.println("Preço original: $" + produto.precoOriginal);
                 System.out.println("Desconto: " + produto.desconto + "%");
+                System.out.println(String.format("O valor final será: $%.2f", valorFinal));
+                System.out.println(String.format("Seu lucro será: $%.2f", produto.lucroFinal));
+                System.out.println();
                 System.out.println("*******************************************");
                 System.out.println();
             }
@@ -107,11 +123,11 @@ public class Main {
         for (Produto produto : listaProdutos) {
             if (produto.nome.equals(nomeProduto)) {
                 System.out.println(
-                        "                    1 = preço do produto" +
-                        "                    2 = quantidade do produto" +
-                        "                    3 = preço original" +
-                        "                    4 = desconto" +
-                        "                    ");
+                                "                    1 = preço do produto" +
+                                "                    2 = quantidade do produto" +
+                                "                    3 = preço original" +
+                                "                    4 = desconto" +
+                                "                    ");
 
                 int mudar = Integer.parseInt(input("Digite o que você quer mudar: "));
                 switch (mudar) {
