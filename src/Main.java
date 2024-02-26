@@ -1,6 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 
 class  Produto {
     String nome;
@@ -12,7 +17,7 @@ class  Produto {
     double lucroFinal;
 
 
-     Produto(String nome, double precoproduto, int quantidade, double precoOriginal, double desconto) {
+    Produto(String nome, double precoproduto, int quantidade, double precoOriginal, double desconto) {
         this.nome = nome;
         this.precoproduto = precoproduto;
         this.quantidade = quantidade;
@@ -23,6 +28,64 @@ class  Produto {
 
 public class Main {
 
+    public static void salvarDados(List<Produto> listaProdutos) throws IOException {
+
+        // Criando um novo arquivo "produtos.txt"
+        File arquivo = new File("produtos.txt");
+
+        // Verificando se o arquivo existe, se não, cria um novo
+        if (!arquivo.exists()) {
+            arquivo.createNewFile();
+        }
+
+        // Criando um PrintWriter para escrever no arquivo
+        PrintWriter escritor = new PrintWriter(new FileWriter(arquivo));
+
+        // Escrevendo cada produto no arquivo
+        for (Produto produto : listaProdutos) {
+            escritor.println(produto.nome + "," + produto.precoproduto + "," + produto.quantidade + "," + produto.precoOriginal + "," + produto.desconto);
+        }
+
+        // Fechando o PrintWriter
+        escritor.close();
+
+        System.out.println("Dados salvos com sucesso!");
+    }
+
+
+    public static List<Produto> lerDados() throws IOException {
+
+        // Criando um novo arquivo "produtos.txt"
+        File arquivo = new File("produtos.txt");
+
+        // Verificando se o arquivo existe
+        if (!arquivo.exists()) {
+            return new ArrayList<>();
+        }
+
+        // Criando um Scanner para ler o arquivo
+        Scanner scanner = new Scanner(arquivo);
+
+        // Criando uma lista vazia para armazenar os produtos
+        List<Produto> listaProdutos = new ArrayList<>();
+
+        // Lendo cada linha do arquivo e criando um novo produto
+        while (scanner.hasNextLine()) {
+            String linha = scanner.nextLine();
+            String[] dados = linha.split(",");
+
+            // Criando um novo produto a partir dos dados da linha
+            Produto produto = new Produto(dados[0], Double.parseDouble(dados[1]), Integer.parseInt(dados[2]), Double.parseDouble(dados[3]), Double.parseDouble(dados[4]));
+
+            // Adicionando o produto à lista
+            listaProdutos.add(produto);
+        }
+
+        // Fechando o Scanner
+        scanner.close();
+
+        return listaProdutos;
+    }
 
     public static String input(String msg) {
         Scanner scanner = new Scanner(System.in);
@@ -30,10 +93,10 @@ public class Main {
         return scanner.nextLine();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Scanner scanner = new Scanner(System.in);
-        List<Produto> listaProdutos = new ArrayList<>();
+        List<Produto> listaProdutos = lerDados();
 
         int decisaoMenu = 0;
 
@@ -49,17 +112,21 @@ public class Main {
             switch (decisaoMenu) {
                 case 1:
                     adicionarProduto(listaProdutos);
+                    salvarDados(listaProdutos);
                     break;
                 case 2:
                     verProdutos(listaProdutos);
                     break;
                 case 3:
                     modificarProduto(listaProdutos);
+                    salvarDados(listaProdutos);
                     break;
                 case 4:
                     removerProduto(listaProdutos);
+                    salvarDados(listaProdutos);
                     break;
                 case 5:
+                    salvarDados(listaProdutos);
                     System.out.println("Saindo do programa...");
                     break;
 
@@ -69,6 +136,7 @@ public class Main {
             }
         }
 
+        salvarDados(listaProdutos);
         scanner.close();
     }
 
@@ -123,7 +191,7 @@ public class Main {
         for (Produto produto : listaProdutos) {
             if (produto.nome.equals(nomeProduto)) {
                 System.out.println(
-                                "                    1 = preço do produto" +
+                        "                    1 = preço do produto" +
                                 "                    2 = quantidade do produto" +
                                 "                    3 = preço original" +
                                 "                    4 = desconto" +
